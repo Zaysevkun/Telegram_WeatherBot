@@ -17,3 +17,12 @@ type Chat struct {
 type RestResponse struct {
 	Result []Update `json:"result"`
 }
+
+type City struct {
+	Count int    `json:"count"`
+	List  []List `json:"list"`
+}
+
+type List struct {
+	Id int `json:"id"`
+}
