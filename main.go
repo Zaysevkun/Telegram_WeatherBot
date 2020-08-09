@@ -25,7 +25,6 @@ func main() {
 	//getCityApiPart2 := ",RU&type=like&APPID="
 	botUrl := telegramApi + botToken
 	offset := 0
-	//keyTest := "2e709d8234d5940dadfee59807e51ddd"
 	//cityUrl := getCityApiPart1 + CityName + getCityApiPart2 + weatherApiKey
 	for {
 		//_, err := getUpdates(botUrl)
