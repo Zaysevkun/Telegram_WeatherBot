@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/joho/godotenv"
@@ -29,7 +30,12 @@ func main() {
 		if err != nil {
 			log.Println("error in GetUpdates", err.Error())
 		}
+		getForecast(botUrl, updates)
 		fmt.Println(updates)
+		//for _,update := range updates {
+		//
+		//}
+
 		fmt.Println(citySearch)
 	}
 }
@@ -85,6 +91,26 @@ func findCity(Url string) (City, error) {
 	return response, nil
 }
 
-func respond() {
+func getForecast(botUrl string, update []Update) {
+	if update[len(update)-1].Message.Text == "/get_forecast" {
+		sendMessage(botUrl, update[len(update)-1])
+	}
+}
 
+func sendMessage(botUrl string, update Update) error {
+	var botMessage BotMessage
+	botMessage.ChatId = update.Message.Chat.ChatId
+	botMessage.Text = "Напиши мне город,на территории которого хочешь узнать погоду"
+	buf, err := json.Marshal(botMessage)
+	if err != nil {
+		return err
+	}
+	sendUrl := botUrl + "/sendMessage"
+	response, err := http.Post(sendUrl, "application/json", bytes.NewBuffer(buf))
+
+	if err != nil {
+		return err
+	}
+	fmt.Println(response)
+	return nil
 }

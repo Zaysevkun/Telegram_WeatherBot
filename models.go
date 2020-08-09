@@ -1,5 +1,8 @@
 package main
 
+type BotCommand struct {
+}
+
 type Update struct {
 	UpdateId int     `json:"update_id"`
 	Message  Message `json:"message"`
@@ -11,7 +14,7 @@ type Message struct {
 }
 
 type Chat struct {
-	ChatId int `json:"chat"`
+	ChatId int `json:"id"`
 }
 
 type RestResponse struct {
@@ -25,4 +28,9 @@ type City struct {
 
 type List struct {
 	Id int `json:"id"`
+}
+
+type BotMessage struct {
+	ChatId int    `json:"chat_id"`
+	Text   string `json:"text"`
 }
