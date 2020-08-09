@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func main() {
@@ -17,24 +18,25 @@ func main() {
 	getCityApiPart1 := "http://api.openweathermap.org/data/2.5/find?q="
 	getCityApiPart2 := ",RU&type=like&APPID="
 	botUrl := telegramApi + botToken
+	offset := 0
 	city := "Moscow"
 	keyTest := "2e709d8234d5940dadfee59807e51ddd"
 	cityUrl := getCityApiPart1 + city + getCityApiPart2 + keyTest
 	for {
 		//_, err := getUpdates(botUrl)
-		updates, err := getUpdates(botUrl)
+		updates, err := getUpdates(botUrl, offset)
 		if err != nil {
 			log.Println("error in GetUpdates", err.Error())
 		}
 		citySearch, err := findCity(cityUrl)
 		if err != nil {
-			log.Println("error in GetUpdates", err.Error())
+			log.Println("error in find in GetUpdates", err.Error())
 		}
-		getForecast(botUrl, updates)
 		fmt.Println(updates)
-		//for _,update := range updates {
-		//
-		//}
+		for _, update := range updates {
+			getForecast(botUrl, update)
+			offset = update.UpdateId + 1
+		}
 
 		fmt.Println(citySearch)
 	}
@@ -55,8 +57,8 @@ func fetchApiKey() (string, string) {
 	return botApiKey, weatherApiKey
 }
 
-func getUpdates(Url string) ([]Update, error) {
-	resp, err := http.Get(Url + "/getUpdates")
+func getUpdates(Url string, offset int) ([]Update, error) {
+	resp, err := http.Get(Url + "/getUpdates" + "?offset=" + strconv.Itoa(offset))
 	if err != nil {
 		return nil, err
 	}
@@ -91,10 +93,14 @@ func findCity(Url string) (City, error) {
 	return response, nil
 }
 
-func getForecast(botUrl string, update []Update) {
-	if update[len(update)-1].Message.Text == "/get_forecast" {
-		sendMessage(botUrl, update[len(update)-1])
+func getForecast(botUrl string, update Update) error {
+	if update.Message.Text == "/get_forecast" {
+		err := sendMessage(botUrl, update)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 func sendMessage(botUrl string, update Update) error {
@@ -107,10 +113,12 @@ func sendMessage(botUrl string, update Update) error {
 	}
 	sendUrl := botUrl + "/sendMessage"
 	response, err := http.Post(sendUrl, "application/json", bytes.NewBuffer(buf))
-
 	if err != nil {
 		return err
 	}
-	fmt.Println(response)
+	fmt.Printf("res.StatusCode: %d\n", response.StatusCode)
+	if response.StatusCode != 200 {
+		log.Fatal(response.Status)
+	}
 	return nil
 }
