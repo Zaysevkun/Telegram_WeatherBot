@@ -12,9 +12,7 @@ import (
 	"strconv"
 )
 
-var ExpectingCity int = 0
-
-//var CityName = ""
+var ExpectingCity = 0
 var botToken = ""
 var weatherApiKey = ""
 var currentCityId = 0
@@ -22,21 +20,13 @@ var currentCityId = 0
 func main() {
 	botToken, weatherApiKey = fetchApiKey()
 	telegramApi := "https://api.telegram.org/bot"
-	//getCityApiPart1 := "http://api.openweathermap.org/data/2.5/find?q="
-	//getCityApiPart2 := ",RU&type=like&APPID="
 	botUrl := telegramApi + botToken
 	offset := 0
-	//cityUrl := getCityApiPart1 + CityName + getCityApiPart2 + weatherApiKey
 	for {
-		//_, err := getUpdates(botUrl)
 		updates, err := getUpdates(botUrl, offset)
 		if err != nil {
 			log.Println("error in GetUpdates", err.Error())
 		}
-		//citySearch, err := findCity(cityUrl)
-		//if err != nil {
-		//	log.Println("error in find in GetUpdates", err.Error())
-		//}
 		fmt.Println(updates)
 		for _, update := range updates {
 			if ExpectingCity == 11 {
@@ -63,8 +53,6 @@ func main() {
 			}
 			offset = update.UpdateId + 1
 		}
-
-		//fmt.Println(citySearch)
 	}
 }
 
@@ -197,7 +185,6 @@ func getCity(botUrl string, update Update) error {
 		if err != nil {
 			return err
 		}
-		//ExpectingCity = 2
 	}
 	return nil
 }
