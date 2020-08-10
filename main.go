@@ -16,10 +16,15 @@ var ExpectingCity = 0
 var botToken = ""
 var weatherApiKey = ""
 var currentCityId = 0
+var port = ""
 
 func main() {
+	port = ":" + os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
 	botToken, weatherApiKey = fetchApiKey()
-	telegramApi := "https://api.telegram.org/bot"
+	telegramApi := "https://api.telegram.org" + port + "/bot"
 	botUrl := telegramApi + botToken
 	offset := 0
 	for {
@@ -190,21 +195,21 @@ func getCity(botUrl string, update Update) error {
 }
 
 func assembleCityUrl(cityName string) string {
-	getCityApiPart1 := "http://api.openweathermap.org/data/2.5/find?q="
+	getCityApiPart1 := "http://api.openweathermap.org" + port + "/data/2.5/find?q="
 	getCityApiPart2 := ",RU&type=like&APPID="
 	cityUrl := getCityApiPart1 + cityName + getCityApiPart2 + weatherApiKey
 	return cityUrl
 }
 
 func assembleCityFiveUrl(cityName string) string {
-	getCityApiPart1 := "http://api.openweathermap.org/data/2.5/forecast?id="
+	getCityApiPart1 := "http://api.openweathermap.org" + port + "/data/2.5/forecast?id="
 	getCityApiPart2 := "&units=metric&lang=ru&appid="
 	cityUrl := getCityApiPart1 + cityName + getCityApiPart2 + weatherApiKey
 	return cityUrl
 }
 
 func getCurrentWeather(id int) (WeatherResponse, error) {
-	apiUrl := "http://api.openweathermap.org/data/2.5/weather?id=" + strconv.Itoa(id) + "&units=metric" + "&lang=ru" + "&appid=" + weatherApiKey
+	apiUrl := "http://api.openweathermap.org" + port + "/data/2.5/weather?id=" + strconv.Itoa(id) + "&units=metric" + "&lang=ru" + "&appid=" + weatherApiKey
 	resp, err := http.Get(apiUrl)
 	var response WeatherResponse
 	if err != nil {
@@ -225,7 +230,7 @@ func getCurrentWeather(id int) (WeatherResponse, error) {
 func sendImage(Url string, update Update, imgCode string) error {
 	var botMessage ImageMessage
 	botMessage.Id = update.Message.Chat.ChatId
-	botMessage.Photo = "http://openweathermap.org/img/wn/" + imgCode + ".png"
+	botMessage.Photo = "http://openweathermap.org" + port + "/img/wn/" + imgCode + ".png"
 	buf, err := json.Marshal(botMessage)
 	if err != nil {
 		return err
