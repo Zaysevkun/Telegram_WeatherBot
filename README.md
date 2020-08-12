@@ -3,4 +3,4 @@ This bot gives you a chance to talk to Gabriel Fahrenheit in person! Oh, and als
 
 [Bot himself](t.me/ZvWeatherBot)
 
-##Bot is hosted 24/7 on Heroku Hobby dyno
+## Bot is hosted 24/7 on Heroku Hobby dyno
