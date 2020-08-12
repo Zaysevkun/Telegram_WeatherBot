@@ -266,15 +266,17 @@ func get5Days(botUrl string, update Update) error {
 		return err
 	}
 	nm := response.City.Name
-	var tmp float64
-	var flslk float64
+	var tmpSum float64
+	var flslkSum float64
 	for i := 0; i < 5; i++ {
+		tmpSum = 0
+		flslkSum = 0
 		for j := i; j < i+8; j++ {
-			tmp += response.List[j].Main.Temp
-			flslk += response.List[j].Main.FeelsLike
+			tmpSum += response.List[j].Main.Temp
+			flslkSum += response.List[j].Main.FeelsLike
 		}
-		tmp := strconv.FormatFloat(tmp/8, 'g', 2, 64)
-		flslk := strconv.FormatFloat(flslk/8, 'g', 2, 64)
+		tmp := strconv.FormatFloat(tmpSum/8, 'g', 2, 64)
+		flslk := strconv.FormatFloat(flslkSum/8, 'g', 2, 64)
 		wtr := response.List[i*8].Weather[0].Description
 		prs := strconv.Itoa(response.List[i*8].Main.Pressure)
 		hum := strconv.Itoa(response.List[i*8].Main.Humidity)
